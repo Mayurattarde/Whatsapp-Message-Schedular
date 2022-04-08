@@ -2,7 +2,18 @@ package com.springboot.restapi.schedular.entity;
 
 public class Client {
 
-	 private int client_id;
+	 public Client(int clientId, String clientName, String token) {
+	        super();
+	        this.client_id = clientId;
+	        this.client_name = clientName;
+	        this.auth_token = token;
+	    }
+	
+	 public Client() {
+		// TODO Auto-generated constructor stub
+	}
+
+	private int client_id;
 	 private String client_name;
 	 private String auth_token;
 	 

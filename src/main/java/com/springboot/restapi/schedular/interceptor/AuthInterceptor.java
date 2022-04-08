@@ -10,8 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;*/
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import com.springboot.restapi.schedular.dao.MessageDao;
 import com.springboot.restapi.schedular.entity.Client;
+import com.springboot.restapi.schedular.service.AuthService;
 //import com.springboot.restapi.schedular.entity.Message;
 //import com.springboot.restapi.schedular.entity.Response;
 
@@ -19,7 +19,7 @@ import com.springboot.restapi.schedular.entity.Client;
 public class AuthInterceptor implements HandlerInterceptor{
 
 	@Autowired
-	MessageDao eDAO;
+	AuthService authService;
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -28,7 +28,7 @@ public class AuthInterceptor implements HandlerInterceptor{
 		System.out.println("Prehandle called");
 		String token = request.getHeader("token");
 		
-		Client client = eDAO.validateToken(token);
+		Client client = authService.validateToken(token);
 		if (client == null) {
 			response.setContentType("application/json");
 			//javax.servlet.http.Cookie ck = new javax.servlet.http.Cookie("message","first cookie");

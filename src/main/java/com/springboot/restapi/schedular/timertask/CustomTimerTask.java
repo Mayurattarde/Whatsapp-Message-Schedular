@@ -15,19 +15,21 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.restapi.schedular.dao.MessageDao;
 import com.springboot.restapi.schedular.entity.Message;
+import com.springboot.restapi.schedular.exceptions.SQLErrorException;
+import com.springboot.restapi.schedular.service.Messageservice;
 
 @Component
 public class CustomTimerTask extends TimerTask{
 
 	@Autowired
-	MessageDao eDAO;
+	Messageservice messageService;
 	
 	public static String encodeParam(String data) {
 		String result = "";
@@ -61,18 +63,30 @@ public class CustomTimerTask extends TimerTask{
 	public void run() {
 		System.out.println("Timer Task is called every half minute");
 		
-		List<Message> messageList = eDAO.pollMessagesFromDatabase();
+		List<Message> messageList = null;
 		/*
 		 * if (messageList.isEmpty()) { System.out.println("messageList is empty");
 		 * return; }
 		 */
+		 try {
+	            messageList = messageService.pollMessagesFromDatabase();
+	        } catch (SQLErrorException e) {
+	            System.out.println(e.getMessage());
+	            return;
+	        }
 
-		System.out.println("Following are the messages to send................");
+	        if (messageList.isEmpty()) {
+	            System.out.println("messagelist is empty");
+	            return;
+	        }
+
+
+		System.out.println("The following message will be send on specified time");
 		Gson gson = new Gson();
 		URL url = null;
 		HttpURLConnection con = null;
 
-		//Iterate over messagelist and send it to the destination using Gupshup Whatsapp API..
+		//Iterate over messageList and send it to the destination using Gupshup Whatsapp API..
 		for (Message ms : messageList) {
 			System.out.println("Running for message_id- " + ms.getMessage_id());
 			try {
@@ -116,19 +130,19 @@ public class CustomTimerTask extends TimerTask{
 					Map<String, String> response = objectMapper.readValue(con.getInputStream(), Map.class);
 					System.out.println("MessageID is -->  " + response.get("messageId"));
 					System.out.println(response.toString());
-					int result = eDAO.updateMessageStatus(false,true, response.get("messageId"),LocalDateTime.now(),ms.getMessage_id());
+					int result = messageService.updateMessageStatus(false,true, response.get("messageId"),LocalDateTime.now(),ms.getMessage_id());
 					if(result <1){
 						System.out.println("Error occured while updating status....");
-					}else System.out.println("Status of meesges is updated--> "+ result);
+					}else System.out.println("Status of meesages is updated--> "+ result);
 				} else {
 					//mark submitted_status as failed
-					int result = eDAO.updateMessageStatus(false,false, null,null,ms.getMessage_id());
+					int result = messageService.updateMessageStatus(false,false, null,null,ms.getMessage_id());
 					System.out.println("Message sending failed for mesageID " + ms.getMessage_id());
 				}
 			} catch (Exception e) {
 				//mark submitted_status as failed
-				int result = eDAO.updateMessageStatus(false,false, null,null,ms.getMessage_id());
-				System.out.println(e.getMessage());
+				System.out.println("exception occured during sending messages through gupshup API");
+				e.printStackTrace();
 			}
 		}
 		
