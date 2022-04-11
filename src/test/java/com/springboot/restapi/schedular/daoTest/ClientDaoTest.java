@@ -21,12 +21,14 @@ public class ClientDaoTest {
 
 	    Logger logger = LoggerFactory.getLogger(ClientDaoTest.class);
 
-		/*
-		 * @Test void getClientUsingToken() throws SQLErrorException { String token =
-		 * "dummytoken"; Client expectedClient = new Client(101, "dummy", "dummytoken");
-		 * Client actualResult = clientDao.getClientUsingToken(token);
-		 * assertThat(actualResult.toString()).isEqualTo(expectedClient.toString()); }
-		 */
+		
+		 @Test void getClientUsingToken() throws SQLErrorException
+		 {
+			 String token = "jnkjnkjnk";
+			 Client expectedClient = new Client(101, "User", "jnkjnkjnk");
+		  Client actualResult = clientDao.getClientUsingToken(token);
+		  assertThat(actualResult.toString()).isEqualTo(expectedClient.toString()); }
+		 
 
 
 	    @Test

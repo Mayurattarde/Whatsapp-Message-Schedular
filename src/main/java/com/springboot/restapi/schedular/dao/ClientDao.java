@@ -30,7 +30,8 @@ public class ClientDao {
 	            return client;
 	        } catch (Exception e) {
 	            logger.warn(e.getMessage());
-	            throw new SQLErrorException("sql error while validating client using token");
+	            //throw new SQLErrorException("sql error while validating client using token");
+	            return null;
 	        }
 
 	    }

@@ -23,6 +23,11 @@ public class Response {
 	public Integer getCode() {
 		return code;
 	}
+	public Response() {
+		super();
+	}
+
+
 	public void setCode(Integer code) {
 		this.code = code;
 	}

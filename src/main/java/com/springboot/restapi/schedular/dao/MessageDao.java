@@ -48,7 +48,7 @@ public class MessageDao {
 
 	 public List<Message> getAllMessagesInOneMinute() throws SQLErrorException {
 //       String query = "select * from message where pending_status = true and scheduled_at between now() and date_add(now(), interval 1 minute)";
-       String query = "select * from message_details where pending_status = true and scheduled_at < date_add(now(),interval 1 minute)";
+       String query = "select * from message_details where pending_status = true and scheduled_at < now()";
 
        List<Message> messages = Collections.emptyList();
        logger.info("polling messages at " + LocalDateTime.now());

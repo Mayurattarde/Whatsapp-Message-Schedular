@@ -34,7 +34,7 @@ public class MessageController {
 	 @GetMapping("/test")
 	    public Response testRoute() {
 	        logger.info("in tesing route");
-	        return new Response(200, "test sucessful..");
+	        return new Response(201, "test successful..");
 	    }
 
 	@PostMapping("/messages")
@@ -51,14 +51,14 @@ public class MessageController {
 	            logger.info("client: " + client);
 	            int result = messageservice.saveMessage(requestBody, client);
 	            logger.info("result here..." + result);
-	            response = new Response(1000, "Message scheduled successfully");
+	            response = new Response(200, "Message scheduled successfully");
 
 	        } catch (SQLErrorException e) {
 	            logger.warn("sql exception occured");
 	            response = new Response(e.getErrorCode(), e.getErrorMessage());
 	        } catch (Exception e) {
 	            logger.warn("exception here " + e.getMessage());
-	            response = new Response(1004, "something went wrong!!");
+	            response = new Response(405, "something went wrong!!");
 	        }
 	        return response;
 
